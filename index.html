@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Roulette Game</title>
+
+    <style>
+
+        body {
+
+            font-family: 'Montserrat';
+
+            background: url(background.png) no-repeat center center fixed;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            height: 100vh;
+
+            margin: 0;
+
+        }
+
+        .game-container {
+
+            background-color: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            border-radius: 8px;
+
+            padding: 20px;
+
+            box-shadow: 20px 20px 22px rgba(0,0,0,0.2);
+
+            text-align: center;
+            
+
+        }
+
+        h1 {
+
+            color: #d5d5d5;
+            font-size: 50px;
+            font-weight: 600;
+            letter-spacing: 0.7px;
+            margin: 5px 0;
+        }
+
+        .display {
+
+            color: #c0c0c0;
+            font-weight: 400;
+            font-size: 14px;
+            letter-spacing: 1px;
+            margin: 5px 0;
+
+        }
+
+        input[type="number"] {
+
+            width: 80%;
+
+            padding: 10px;
+
+            margin: 10px 0;
+
+            border: 1px solid #ddd;
+
+            border-radius: 5px;
+
+            background-color: rgba(255,255,255,0.06);
+
+            color: white
+
+        }
+
+        button {
+
+            background-color: rgba(255,255,255,0.06);
+
+            backdrop-filter: blur(20px);
+
+            width: 95%;
+
+            left: 10%;
+
+            top: 240px;
+
+            border: none;
+
+            border-radius: 5px;
+
+            padding: 15px 0;
+
+            color: white;
+
+        }
+
+        button:hover {
+
+            background-color: rgba(255, 255, 255, 0.17);
+
+        }
+
+        #result {
+
+            margin-top: 20px;
+
+            font-weight: normal;
+
+            color:white
+
+        }
+
+       
+    </style>
+
+</head>
+
+<body>
+
+    <div class="game-container">
+
+        <h1>Roulette Game</h1>
+
+        <div id="cashDisplay" class="display"></div>
+
+        <div id="betDisplay" class="display"></div>
+
+        <input type="number" id="betInput" placeholder="Enter your bet:">
+
+        <button onclick="placeBet()">Place Bet</button>
+
+        <input type="number" id="guessInput" placeholder="Enter your guess (1-10)">
+
+        <button onclick="rollRoulette()">Roll Roulette</button>
+
+        <button onclick="resetGame()">Reset Game</button>
+
+        <div id="result"></div>
+
+    </div>
+
+ 
+
+    <script>
+
+        let playerCash = Math.floor(Math.random() * (120 - 80 + 1)) + 80;
+
+        let currentBet = 0;
+
+        let winMultiplier = 1;
+
+        const randomMin = 1;
+
+        const randomMax = 10;
+
+ 
+
+        function updateDisplay() {
+
+            document.getElementById('cashDisplay').innerText = `Cash: $${playerCash}`;
+
+            document.getElementById('betDisplay').innerText = `Current Bet: $${currentBet}`;
+
+        }
+
+ 
+
+        function placeBet() {
+
+            const bet = parseInt(document.getElementById('betInput').value);
+
+            if (isNaN(bet) || bet < 0) {
+
+                alert("Please enter a valid bet amount.");
+
+            } else if (bet > playerCash) {
+
+                alert(`Invalid Cash, you only have ${playerCash}.`);
+
+            } else {
+
+                currentBet = bet;
+
+                updateDisplay();
+
+            }
+
+        }
+
+ 
+
+        function rollRoulette() {
+
+            if (currentBet === 0) {
+
+                alert("You must place a bet to begin.");
+
+                return;
+
+            }
+
+ 
+
+            const playerGuess = parseInt(document.getElementById('guessInput').value);
+
+            if (isNaN(playerGuess) || playerGuess < randomMin || playerGuess > randomMax) {
+
+                alert(`Please enter a valid guess between ${randomMin} and ${randomMax}.`);
+
+                return;
+
+            }
+
+ 
+
+            const computerNumber = Math.floor(Math.random() * (randomMax - randomMin + 1)) + randomMin;
+
+ 
+
+            if (playerGuess === computerNumber) {
+
+                const winnings = Math.floor(currentBet * winMultiplier);
+
+                playerCash += winnings;
+
+                document.getElementById('result').innerText = `Congratulations! You guessed the number! $${winnings} added to your balance!`;
+
+                winMultiplier += Math.random() * 0.9 + 0.1;
+
+            } else {
+
+                playerCash -= currentBet;
+
+                document.getElementById('result').innerText = `Unlucky... The number was ${computerNumber}. You lost $${currentBet}.`;
+
+                winMultiplier = Math.max(1, winMultiplier - 1);
+
+            }
+
+ 
+
+            currentBet = 0;
+
+            updateDisplay();
+
+        }
+
+ 
+
+        function resetGame() {
+
+            playerCash = Math.floor(Math.random() * (120 - 80 + 1)) + 80;
+
+            currentBet = 0;
+
+            winMultiplier = 1;
+
+            updateDisplay();
+
+            document.getElementById('result').innerText = '';
+
+            document.getElementById('betInput').value = '';
+
+            document.getElementById('guessInput').value = '';
+
+        }
+
+ 
+
+        updateDisplay();
+
+    </script>
+
+</body>
+
+</html>
